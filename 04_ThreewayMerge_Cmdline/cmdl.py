@@ -1,7 +1,6 @@
 import readline
 import shlex
 import cmd
-import defaultdict
 
 class Monster:
     def __init__(self, name, hp, x, y):
@@ -20,59 +19,59 @@ class game(cmd.Cmd):
     monsters = []
     player = Player()
 
-    def do_perform(self, arg):
+    def do_add(self, arg):
         args = shlex.split(arg)
-        if args[0] == "add":
-            name = args[3]
-            hp = args[5]
-            x = args[7]
-            y = args[8]
-            for monster in monsters:
-                if monster.x == x and monster.y == y and monster.name == name:
-                    monster.hp = hp
-                    return
-            monsters.append(Monster(name, hp, x, y))
-    
-        elif args[0] == "show":
-            for monster in monsters:
-                print(f"{monster.name} at ({monster.x} {monster.y}) hp {monster.hp}")
+        name = args[3]
+        hp = args[5]
+        x = args[7]
+        y = args[8]
+        for monster in monsters:
+            if monster.x == x and monster.y == y and monster.name == name:
+                monster.hp = hp
+                return
+        monsters.append(Monster(name, hp, x, y))
 
-        elif args[0] == "move":
-            phrase = "cannot move"
-            if args[1] == "up":
-                if player.y < 9:
-                    player.y += 1
-                    phrase = ""
-            elif args[1] == "down":
-                if player.y > 0:
-                    player.y -= 1
-                    phrase = ""
-            elif args[1] == "right":
-                if player.x < 9:
-                    player.x += 1
-                    phrase = ""
-            elif args[1] == "left":
-                if player.x > 0:
-                    player.x -= 1
-                    phrase = ""
+    def do_show(self, arg):
+        for monster in monsters:
+            print(f"{monster.name} at ({monster.x} {monster.y}) hp {monster.hp}")
 
-            if phrase:
-                print(phrase)
-            else:
-                print(f"player at {player.x} {player.y}")
-                print(f"encountered: {monster.name} {monster.hp} hp".join(',') for monster in monsters if monster.x == player.x and monster.y == player.y)
+    def do_move(self, arg):
+        args = shlex.split(arg)
+        phrase = "cannot move"
+        if args[1] == "up":
+            if player.y < 9:
+                player.y += 1
+                phrase = ""
+        elif args[1] == "down":
+            if player.y > 0:
+                player.y -= 1
+                phrase = ""
+        elif args[1] == "right":
+            if player.x < 9:
+                player.x += 1
+                phrase = ""
+        elif args[1] == "left":
+            if player.x > 0:
+                player.x -= 1
+                phrase = ""
 
-        elif args[0] == "atack":
-            for monster in monsters:
-                if monster.x == player.x and monster.y == player.y and monster.name == args[1]:
-                    monster.hp -= 10
-                    if monster.hp <= 0:
-                        print(f"{monster.name} dies")
-                        monsters.remove(monster)
-                    else:
-                        print(f"monster {monster.name} lost 10 hp, now has {monster.hp} hp")
-                    return
-            print(f"no {args[1]} here")
+        if phrase:
+            print(phrase)
+        else:
+            print(f"player at {player.x} {player.y}")
+            print(f"encountered: {monster.name} {monster.hp} hp".join(',') for monster in monsters if monster.x == player.x and monster.y == player.y)
+        
+    def do_atack(self, arg):
+        for monster in monsters:
+            if monster.x == player.x and monster.y == player.y and monster.name == args[1]:
+                monster.hp -= 10
+                if monster.hp <= 0:
+                    print(f"{monster.name} dies")
+                    monsters.remove(monster)
+                else:
+                    print(f"monster {monster.name} lost 10 hp, now has {monster.hp} hp")
+                return
+        print(f"no {args[1]} here")
 
     def complete_perform(self, prefix, allcommand, beg, end):
         return [s for s in ("sing", "show") if s.startswith(prefix)]
