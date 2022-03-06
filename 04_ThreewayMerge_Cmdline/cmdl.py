@@ -18,6 +18,7 @@ class game(cmd.Cmd):
     prompt = "> "
     monsters = []
     player = Player()
+    cnt = 0
 
     def do_add(self, arg):
         args = shlex.split(arg)
@@ -79,9 +80,10 @@ class game(cmd.Cmd):
                 return
         print(f"no {args[0]} here")
 
-    def complete_perform(self, prefix, allcommand, beg, end):
-        return [s for s in ("sing", "show") if s.startswith(prefix)]
-        
+    def complete_move(self, prefix, allcommand, beg, end):
+        directions = ["up", "down", "left", "right"]
+        return [s for s in directions if s.startswith(prefix)]
+    
     def do_exit(self, arg):
         return True
 
