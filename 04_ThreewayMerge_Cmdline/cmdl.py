@@ -62,14 +62,17 @@ class game(cmd.Cmd):
                 print(f"player at {player.x} {player.y}")
                 print(f"encountered: {monster.name} {monster.hp} hp".join(',') for monster in monsters if monster.x == player.x and monster.y == player.y)
 
-    def do_perform(self, arg):
-        args = shlex.split(arg)
-        if args[0] == "sing":
-            print("-".join(args[1]))
-        elif args[0] == "show":
-            print(" ".join(args[1:]).upper())
-        else:
-            print(f"Don't know how to {args[0]}")
+        elif args[0] == "atack":
+            for monster in monsters:
+                if monster.x == player.x and monster.y == player.y and monster.name == args[1]:
+                    monster.hp -= 10
+                    if monster.hp <= 0:
+                        print(f"{monster.name} dies")
+                        monsters.remove(monster)
+                    else:
+                        print(f"monster {monster.name} lost 10 hp, now has {monster.hp} hp")
+                    return
+            print(f"no {args[1]} here")
 
     def complete_perform(self, prefix, allcommand, beg, end):
         return [s for s in ("sing", "show") if s.startswith(prefix)]
